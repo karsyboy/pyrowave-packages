@@ -7,7 +7,7 @@
 
 pkgbase=pyroshine-bin
 pkgname=(pyroshine-bin pyroshine-ui-bin)
-pkgver=0.17.1
+pkgver=0.17.2
 pkgrel=1
 pkgdesc='Pyroshine game-streaming host for Moonlight clients, with native PyroWave support'
 arch=('x86_64')
@@ -21,8 +21,8 @@ source=("pyroshine-${pkgver}-nfpm.tar.zst::${_release}/pyroshine-${pkgver}-1-x86
         "pyroshine-ui-${pkgver}-nfpm.tar.zst::${_release}/pyroshine-ui-${pkgver}-1-x86_64.pkg.tar.zst")
 noextract=("pyroshine-${pkgver}-nfpm.tar.zst"
            "pyroshine-ui-${pkgver}-nfpm.tar.zst")
-sha256sums=('41d767f1003df7a7955411c1cdd328c2958cf82c6e689b96a0911946ef2c1077'
-            'd5601b7c0c18b261e7fade07afad1a7f98f67628f59d097d2a4171e1a1bfa266')
+sha256sums=('16ed352aa98962cdaeea363da67d00534db73c1eca706685144387c2dac02ae8'
+            'b6d5f1fde6531a8e4d9fe2d1734a62606a514b7caeb34bd8c1e541bd20d0a757')
 
 _extract() {
   # nfpm's .PKGINFO/.MTREE/.INSTALL are replaced by this PKGBUILD's metadata.
