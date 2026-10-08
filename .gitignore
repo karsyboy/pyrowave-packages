@@ -1,0 +1,7 @@
+# makepkg output when building a package directory by hand
+*/src/
+*/pkg/
+*.tar.zst
+*.sig
+# Never commit the private signing key
+*.private.asc

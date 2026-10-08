@@ -1,0 +1,70 @@
+---
+name: Publish
+
+# Hourly, new stable Pyroshine and Pyrolight releases are packaged and
+# published to the [pyrowave] repository (the x86_64 release of this repo).
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '*/PKGBUILD'
+      - '*/*.install'
+      - 'scripts/**'
+      - '.github/workflows/publish.yml'
+
+permissions:
+  contents: write
+
+# Runs must not interleave their database updates.
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Sync the pacman repository
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    steps:
+      - name: Install tools
+        run: pacman -Syu --noconfirm --needed git github-cli jq pacman-contrib
+
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build, sign and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACMAN_SIGNING_KEY: ${{ secrets.PACMAN_SIGNING_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$PACMAN_SIGNING_KEY" || { echo "Set the PACMAN_SIGNING_KEY secret" >&2; exit 1; }
+          # makepkg refuses to run as root.
+          useradd -m builder
+          chown -R builder .
+          runuser -u builder -- gpg --batch --quiet --import <<<"$PACMAN_SIGNING_KEY"
+          GPGKEY=$(runuser -u builder -- gpg --list-secret-keys --with-colons | awk -F: '/^fpr/ { print $10; exit }')
+          GPGKEY=$GPGKEY runuser -u builder -- scripts/sync.sh
+
+      # Also after a partial failure: sync.sh restores a PKGBUILD it could not
+      # update, and a committed update whose package was not published is
+      # built on the next run.
+      - name: Commit version updates
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git add -- */PKGBUILD */.SRCINFO
+          git diff --cached --quiet && exit 0
+          summary=$(git diff --cached --name-only -- '*/PKGBUILD' | while read -r f; do
+            printf '%s %s-%s, ' "${f%/PKGBUILD}" "$(sed -n 's/^pkgver=//p' "$f")" "$(sed -n 's/^pkgrel=//p' "$f")"
+          done)
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -q -m "Update ${summary%, }"
+          git push

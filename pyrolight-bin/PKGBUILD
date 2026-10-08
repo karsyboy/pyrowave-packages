@@ -1,0 +1,39 @@
+# Maintainer: karsyboy
+#
+# pyrolight-bin repackages the Arch package that Pyrolight's release workflow
+# builds with nfpm (scripts/build-linux-packages.sh and app/deploy/linux/nfpm.yaml
+# in karsyboy/pyrolight): the verified AppImage payload in /opt/pyrolight.
+# Keep depends in sync with nfpm.yaml's archlinux override.
+# scripts/sync.sh sets pkgver and checksums for new releases.
+
+pkgname=pyrolight-bin
+pkgver=6.2.3
+pkgrel=1
+pkgdesc='Moonlight game-streaming client fork with PyroWave support, for Pyroshine and other compatible hosts'
+arch=('x86_64')
+url='https://github.com/karsyboy/pyrolight'
+license=('GPL-3.0-or-later')
+depends=('glibc>=2.35' 'libgcc' 'libstdc++' 'libglvnd' 'libdrm' 'libx11' 'libxcb' 'libxext'
+         'libxfixes' 'libxi' 'libxcursor' 'libxrandr' 'libxss' 'libxtst' 'libice'
+         'libsm' 'fontconfig' 'freetype2' 'harfbuzz' 'zlib' 'e2fsprogs'
+         'libgpg-error' 'wayland' 'systemd-libs' 'alsa-lib' 'libva' 'bash'
+         'hicolor-icon-theme')
+optdepends=('vulkan-driver: PyroWave decoding and Vulkan rendering'
+            'libpulse: PulseAudio/PipeWire audio output'
+            'libdecor: window decorations on Wayland compositors without server-side decorations')
+provides=("pyrolight=${pkgver}")
+# Pyrolight keeps Moonlight's desktop ID, AppStream ID and settings location.
+conflicts=('pyrolight' 'moonlight-qt' 'moonlight-qt-bin' 'moonlight-qt-git')
+# The payload is the release AppImage's own pinned, stripped Qt/SDL/FFmpeg bundle.
+options=('!strip' '!debug')
+# Renamed so the downloaded nfpm package is not mistaken for makepkg output.
+source=("pyrolight-${pkgver}-nfpm.tar.zst::${url}/releases/download/v${pkgver}/pyrolight-${pkgver}-1-x86_64.pkg.tar.zst")
+noextract=("pyrolight-${pkgver}-nfpm.tar.zst")
+sha256sums=('5a2e770bc021bdf3be31639843971cd534581cc4e5db1455d707d3ad02493957')
+
+package() {
+  # nfpm's .PKGINFO/.MTREE are replaced by this PKGBUILD's metadata.
+  bsdtar -xf "$srcdir/pyrolight-${pkgver}-nfpm.tar.zst" -C "$pkgdir" \
+    --exclude '.PKGINFO' --exclude '.MTREE' --exclude '.INSTALL' --exclude '.BUILDINFO'
+  mv "$pkgdir/usr/share/licenses/pyrolight" "$pkgdir/usr/share/licenses/$pkgname"
+}
