@@ -23,7 +23,7 @@ optdepends=('vulkan-driver: PyroWave decoding and Vulkan rendering'
             'libdecor: window decorations on Wayland compositors without server-side decorations')
 provides=("pyrolight=${pkgver}")
 # Pyrolight keeps Moonlight's desktop ID, AppStream ID and settings location.
-conflicts=('pyrolight' 'moonlight-qt' 'moonlight-qt-bin' 'moonlight-qt-git')
+conflicts=('pyrolight' 'moonlight-qt')
 # The payload is the release AppImage's own pinned, stripped Qt/SDL/FFmpeg bundle.
 options=('!strip' '!debug')
 # Renamed so the downloaded nfpm package is not mistaken for makepkg output.

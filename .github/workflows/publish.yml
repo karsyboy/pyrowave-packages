@@ -1,11 +1,11 @@
 ---
 name: Publish
 
-# Hourly, new stable Pyroshine and Pyrolight releases are packaged and
-# published to the [pyrowave] repository (the x86_64 release of this repo).
+# Packages new stable Pyroshine and Pyrolight releases and publishes them to the
+# [pyrowave] repository (the x86_64 release of this repo). Each project's
+# release workflow starts it with workflow_dispatch once its release is
+# published; a push that changes a package also runs it.
 on:
-  schedule:
-    - cron: '23 * * * *'
   workflow_dispatch:
   push:
     branches: [main]

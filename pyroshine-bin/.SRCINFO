@@ -32,8 +32,6 @@ pkgname = pyroshine-bin
 	optdepends = pyroshine-ui-bin: system tray, pairing and settings app
 	provides = pyroshine=0.17.1
 	conflicts = pyroshine
-	conflicts = moonshine
-	conflicts = moonshine-bin
 
 pkgname = pyroshine-ui-bin
 	pkgdesc = Desktop app for the Pyroshine streaming server: tray, pairing, clients, settings and stream dashboard

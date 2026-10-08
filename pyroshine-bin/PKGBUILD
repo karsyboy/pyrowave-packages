@@ -36,8 +36,7 @@ package_pyroshine-bin() {
   optdepends=('vulkan-driver: hardware Vulkan for PyroWave encoding'
               'pyroshine-ui-bin: system tray, pairing and settings app')
   provides=("pyroshine=${pkgver}")
-  # Upstream Moonshine serves the same ports and devices; nfpm.yaml declares the same.
-  conflicts=('pyroshine' 'moonshine' 'moonshine-bin')
+  conflicts=('pyroshine')
   install=pyroshine-bin.install
 
   _extract "$srcdir/pyroshine-${pkgver}-nfpm.tar.zst"

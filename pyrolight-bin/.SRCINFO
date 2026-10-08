@@ -39,8 +39,6 @@ pkgbase = pyrolight-bin
 	provides = pyrolight=6.2.3
 	conflicts = pyrolight
 	conflicts = moonlight-qt
-	conflicts = moonlight-qt-bin
-	conflicts = moonlight-qt-git
 	noextract = pyrolight-6.2.3-nfpm.tar.zst
 	options = !strip
 	options = !debug

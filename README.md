@@ -10,7 +10,8 @@ Arch-based x86_64 systems. It provides:
 | `pyrolight-bin` | [Pyrolight](https://github.com/karsyboy/pyrolight) streaming client with PyroWave support |
 
 Each package repackages the Arch package attached to the project's GitHub
-release. New stable releases appear here within about an hour.
+release. Each new stable release is published here as soon as the project's
+release workflow finishes.
 
 ## Setup
 
@@ -40,8 +41,7 @@ sudo pacman -Syu pyrolight-bin
 upgrade, restart the service: `sudo systemctl restart "pyroshine@$USER"`.
 
 `pyrolight-bin` replaces `moonlight-qt`: Pyrolight keeps Moonlight's desktop ID
-and settings, so paired hosts carry over. `pyroshine-bin` conflicts with
-`moonshine`.
+and settings, so paired hosts carry over.
 
 To remove the repository, uninstall its packages, delete the `[pyrowave]`
 section from `/etc/pacman.conf`, and run
@@ -49,8 +49,9 @@ section from `/etc/pacman.conf`, and run
 
 ## How it works
 
-The [publish workflow](.github/workflows/publish.yml) runs hourly, on manual
-dispatch and on pushes that change a package. It runs
+The [Publish workflow](.github/workflows/publish.yml) runs when Pyroshine's or
+Pyrolight's release workflow starts it after publishing a stable release, when
+started by hand, and on pushes that change a package. It runs
 [scripts/sync.sh](scripts/sync.sh) in an Arch container, which:
 
 1. Finds each project's newest stable release (tags `vX.Y.Z`; prereleases are
@@ -68,12 +69,18 @@ never replaced, because pacman caches packages by file name.
 
 | Task | How |
 | --- | --- |
-| Publish a release now | Run the **Publish** workflow from the Actions tab |
+| Publish by hand | Run the **Publish** workflow from the Actions tab |
 | Fix a PKGBUILD | Edit it, bump `pkgrel`, run `makepkg --printsrcinfo > .SRCINFO` and push |
 | Change dependencies | Keep `depends` in sync with the `archlinux` overrides in Pyroshine's `nfpm.yaml`/`nfpm-ui.yaml` and Pyrolight's `app/deploy/linux/nfpm.yaml` |
 | Test locally | `GPGKEY=<fingerprint> STORE=/tmp/pyrowave-repo scripts/sync.sh` publishes to a directory instead of GitHub |
 
-The workflow needs the `PACMAN_SIGNING_KEY` secret: the ASCII-armored private
-key for the fingerprint above, without a passphrase. GitHub disables scheduled
-workflows after 60 days without repository activity; re-enable **Publish** in
-the Actions tab if that happens.
+Secrets:
+
+| Repository | Secret | Value |
+| --- | --- | --- |
+| `pyrowave-packages` | `PACMAN_SIGNING_KEY` | ASCII-armored private key for the fingerprint above, without a passphrase |
+| `pyroshine`, `pyrolight` | `PACKAGES_DISPATCH_TOKEN` | Fine-grained token with access to `pyrowave-packages` only and the **Actions: Read and write** permission, so their release workflows can start **Publish** |
+
+If a release's **Update pacman repository** job fails (for example, an expired
+token), run **Publish** by hand after fixing it; it catches up on every
+unpublished release.
