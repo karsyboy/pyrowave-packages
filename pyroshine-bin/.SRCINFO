@@ -1,18 +1,18 @@
 pkgbase = pyroshine-bin
 	pkgdesc = Pyroshine game-streaming host for Moonlight clients, with native PyroWave support
-	pkgver = 0.17.2
+	pkgver = 0.17.3
 	pkgrel = 1
 	url = https://github.com/karsyboy/pyroshine
 	arch = x86_64
 	license = BSD-2-Clause
-	noextract = pyroshine-0.17.2-nfpm.tar.zst
-	noextract = pyroshine-ui-0.17.2-nfpm.tar.zst
+	noextract = pyroshine-0.17.3-nfpm.tar.zst
+	noextract = pyroshine-ui-0.17.3-nfpm.tar.zst
 	options = !strip
 	options = !debug
-	source = pyroshine-0.17.2-nfpm.tar.zst::https://github.com/karsyboy/pyroshine/releases/download/v0.17.2/pyroshine-0.17.2-1-x86_64.pkg.tar.zst
-	source = pyroshine-ui-0.17.2-nfpm.tar.zst::https://github.com/karsyboy/pyroshine/releases/download/v0.17.2/pyroshine-ui-0.17.2-1-x86_64.pkg.tar.zst
-	sha256sums = 16ed352aa98962cdaeea363da67d00534db73c1eca706685144387c2dac02ae8
-	sha256sums = b6d5f1fde6531a8e4d9fe2d1734a62606a514b7caeb34bd8c1e541bd20d0a757
+	source = pyroshine-0.17.3-nfpm.tar.zst::https://github.com/karsyboy/pyroshine/releases/download/v0.17.3/pyroshine-0.17.3-1-x86_64.pkg.tar.zst
+	source = pyroshine-ui-0.17.3-nfpm.tar.zst::https://github.com/karsyboy/pyroshine/releases/download/v0.17.3/pyroshine-ui-0.17.3-1-x86_64.pkg.tar.zst
+	sha256sums = 25d5aa89983a0306a15114019c0ae6baefe26fa2a5b09a4f98309d62421d2e17
+	sha256sums = abc33c7429067cf9f4de5b4f501ade0fc342a47fc0a56cc90d02c8de5abc311e
 
 pkgname = pyroshine-bin
 	install = pyroshine-bin.install
@@ -30,13 +30,13 @@ pkgname = pyroshine-bin
 	depends = xorg-xwayland
 	optdepends = vulkan-driver: hardware Vulkan for PyroWave encoding
 	optdepends = pyroshine-ui-bin: system tray, pairing and settings app
-	provides = pyroshine=0.17.2
+	provides = pyroshine=0.17.3
 	conflicts = pyroshine
 
 pkgname = pyroshine-ui-bin
 	pkgdesc = Desktop app for the Pyroshine streaming server: tray, pairing, clients, settings and stream dashboard
 	install = pyroshine-ui-bin.install
-	depends = pyroshine=0.17.2
+	depends = pyroshine=0.17.3
 	depends = cairo
 	depends = dbus
 	depends = gdk-pixbuf2
@@ -47,6 +47,6 @@ pkgname = pyroshine-ui-bin
 	depends = libgcc
 	depends = libsoup3
 	depends = webkit2gtk-4.1
-	provides = pyroshine-ui=0.17.2
+	provides = pyroshine-ui=0.17.3
 	conflicts = pyroshine-ui
 	backup = etc/xdg/autostart/pyroshine-ui.desktop
