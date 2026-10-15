@@ -7,7 +7,7 @@
 # scripts/sync.sh sets pkgver and checksums for new releases.
 
 pkgname=pyrolight-bin
-pkgver=6.2.6
+pkgver=6.2.7
 pkgrel=1
 pkgdesc='Moonlight game-streaming client fork with PyroWave support, for Pyroshine and other compatible hosts'
 arch=('x86_64')
@@ -29,7 +29,7 @@ options=('!strip' '!debug')
 # Renamed so the downloaded nfpm package is not mistaken for makepkg output.
 source=("pyrolight-${pkgver}-nfpm.tar.zst::${url}/releases/download/v${pkgver}/pyrolight-${pkgver}-1-x86_64.pkg.tar.zst")
 noextract=("pyrolight-${pkgver}-nfpm.tar.zst")
-sha256sums=('39fe3769b5c8ff77a6301b709387b20d1f3ddcdde91b7ec6031892d892682d38')
+sha256sums=('35b06a7f8a0f391b5d1c3ac4a3ac7d220a1e35486fbd9974452bdabbf84196c0')
 
 package() {
   # nfpm's .PKGINFO/.MTREE are replaced by this PKGBUILD's metadata.
