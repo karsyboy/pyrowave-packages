@@ -1,57 +1,39 @@
 # Maintainer: karsyboy
 #
-# pyroshine-bin and pyroshine-ui-bin repackage the Arch packages that
-# Pyroshine's release workflow builds with nfpm (nfpm.yaml and nfpm-ui.yaml in
-# karsyboy/pyroshine); keep depends in sync with their archlinux overrides.
-# scripts/sync.sh sets pkgver and checksums for new releases.
+# pyroshine-bin repackages the Arch package that Pyroshine's release workflow
+# builds with nfpm (nfpm.yaml in karsyboy/pyroshine); keep depends in sync
+# with its archlinux overrides. scripts/sync.sh sets pkgver and checksums for
+# new releases.
 
-pkgbase=pyroshine-bin
-pkgname=(pyroshine-bin pyroshine-ui-bin)
+pkgname=pyroshine-bin
 pkgver=0.17.6
 pkgrel=1
-pkgdesc='Pyroshine game-streaming host for Moonlight clients, with native PyroWave support'
+pkgdesc='Pyroshine game-streaming host for Moonlight clients, with native PyroWave support, web management and desktop tray'
 arch=('x86_64')
 url='https://github.com/karsyboy/pyroshine'
 license=('BSD-2-Clause')
 # Release binaries are already stripped; the bundled PyroWave library is pinned.
 options=('!strip' '!debug')
+depends=('glibc>=2.39' 'libgcc' 'libstdc++' 'hicolor-icon-theme' 'libdrm' 'libevdev' 'libffi'
+         'libxkbcommon' 'mesa' 'opus' 'vulkan-icd-loader' 'wayland' 'xorg-xwayland')
+optdepends=('vulkan-driver: hardware Vulkan for PyroWave encoding'
+            'xdg-desktop-portal: open the web interface from the tray with focus'
+            'xdg-utils: open the web interface without a desktop portal')
+# From 0.18 the server package includes the tray and the web interface; the
+# GTK/WebKitGTK desktop app (pyroshine-ui-bin) is gone.
+provides=("pyroshine=${pkgver}" "pyroshine-ui=${pkgver}")
+conflicts=('pyroshine' 'pyroshine-ui' 'pyroshine-ui-bin')
+replaces=('pyroshine-ui-bin')
+install=pyroshine-bin.install
 _release="${url}/releases/download/v${pkgver}"
-# Renamed so the downloaded nfpm packages are not mistaken for makepkg output.
-source=("pyroshine-${pkgver}-nfpm.tar.zst::${_release}/pyroshine-${pkgver}-1-x86_64.pkg.tar.zst"
-        "pyroshine-ui-${pkgver}-nfpm.tar.zst::${_release}/pyroshine-ui-${pkgver}-1-x86_64.pkg.tar.zst")
-noextract=("pyroshine-${pkgver}-nfpm.tar.zst"
-           "pyroshine-ui-${pkgver}-nfpm.tar.zst")
-sha256sums=('51cd35f12dab35dfadb78da0a85116c97bf36b416698429973c2f56fb849ae7e'
-            '0d6c066f7a51cabaeae909fafbdd0853effdac99e62f5146c77f2c0c358805e2')
+# Renamed so the downloaded nfpm package is not mistaken for makepkg output.
+source=("pyroshine-${pkgver}-nfpm.tar.zst::${_release}/pyroshine-${pkgver}-1-x86_64.pkg.tar.zst")
+noextract=("pyroshine-${pkgver}-nfpm.tar.zst")
+sha256sums=('51cd35f12dab35dfadb78da0a85116c97bf36b416698429973c2f56fb849ae7e')
 
-_extract() {
+package() {
   # nfpm's .PKGINFO/.MTREE/.INSTALL are replaced by this PKGBUILD's metadata.
-  bsdtar -xf "$1" -C "$pkgdir" --exclude '.PKGINFO' --exclude '.MTREE' \
-    --exclude '.INSTALL' --exclude '.BUILDINFO'
-}
-
-package_pyroshine-bin() {
-  depends=('glibc>=2.39' 'libgcc' 'libstdc++' 'libdrm' 'libevdev' 'libffi' 'libxkbcommon'
-           'mesa' 'opus' 'vulkan-icd-loader' 'wayland' 'xorg-xwayland')
-  optdepends=('vulkan-driver: hardware Vulkan for PyroWave encoding'
-              'pyroshine-ui-bin: system tray, pairing and settings app')
-  provides=("pyroshine=${pkgver}")
-  conflicts=('pyroshine')
-  install=pyroshine-bin.install
-
-  _extract "$srcdir/pyroshine-${pkgver}-nfpm.tar.zst"
+  bsdtar -xf "$srcdir/pyroshine-${pkgver}-nfpm.tar.zst" -C "$pkgdir" --exclude '.PKGINFO' \
+    --exclude '.MTREE' --exclude '.INSTALL' --exclude '.BUILDINFO'
   mv "$pkgdir/usr/share/licenses/pyroshine" "$pkgdir/usr/share/licenses/$pkgname"
-}
-
-package_pyroshine-ui-bin() {
-  pkgdesc='Desktop app for the Pyroshine streaming server: tray, pairing, clients, settings and stream dashboard'
-  depends=("pyroshine=${pkgver}" 'cairo' 'dbus' 'gdk-pixbuf2' 'glib2' 'glibc>=2.39'
-           'gtk3' 'hicolor-icon-theme' 'libgcc' 'libsoup3' 'webkit2gtk-4.1')
-  provides=("pyroshine-ui=${pkgver}")
-  conflicts=('pyroshine-ui')
-  backup=('etc/xdg/autostart/pyroshine-ui.desktop')
-  install=pyroshine-ui-bin.install
-
-  _extract "$srcdir/pyroshine-ui-${pkgver}-nfpm.tar.zst"
-  mv "$pkgdir/usr/share/licenses/pyroshine-ui" "$pkgdir/usr/share/licenses/$pkgname"
 }

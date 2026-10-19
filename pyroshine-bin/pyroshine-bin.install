@@ -14,10 +14,17 @@ post_install() {
       sudo systemctl enable --now "pyroshine@$USER"
       pyroshine healthcheck
     Optional, for headless hosts:  sudo loginctl enable-linger "$USER"
+    Web interface: run 'pyroshine web setup' once, then open Pyroshine from the
+    application menu (or http://127.0.0.1:47990/). In a desktop session the
+    tray icon appears on its own.
 MSG
 }
 
 post_upgrade() {
   _load_input
   echo '==> Restart the service to use the new binaries: sudo systemctl restart "pyroshine@$USER"'
+  if [ "$(vercmp "$2" 0.18.0-0)" -lt 0 ]; then
+    echo "==> Management moved to the browser: run 'pyroshine web setup' once, then open"
+    echo "    Pyroshine from the application menu. The server now shows the tray itself."
+  fi
 }

@@ -5,8 +5,7 @@ Arch-based x86_64 systems. It provides:
 
 | Package | Contents |
 | --- | --- |
-| `pyroshine-bin` | [Pyroshine](https://github.com/karsyboy/pyroshine) streaming host: server, systemd service, udev rules and PyroWave library |
-| `pyroshine-ui-bin` | Pyroshine desktop app: tray, pairing, client management, settings and stream dashboard |
+| `pyroshine-bin` | [Pyroshine](https://github.com/karsyboy/pyroshine) streaming host: server, systemd service, udev rules, PyroWave library, web management interface and desktop tray (from 0.18 it replaces `pyroshine-ui-bin`) |
 | `pyrolight-bin` | [Pyrolight](https://github.com/karsyboy/pyrolight) streaming client with PyroWave support |
 
 Each package repackages the Arch package attached to the project's GitHub
@@ -29,8 +28,8 @@ The key fingerprint is `A8054CC188EAE0293E3EA5B509DC88C65239130E`
 ## Install and upgrade
 
 ```sh
-# Streaming host, optionally with its desktop app
-sudo pacman -Syu pyroshine-bin pyroshine-ui-bin
+# Streaming host (web interface and desktop tray included)
+sudo pacman -Syu pyroshine-bin
 sudo systemctl enable --now "pyroshine@$USER"
 
 # Streaming client
