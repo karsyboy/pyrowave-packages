@@ -23,7 +23,7 @@ MSG
 post_upgrade() {
   _load_input
   echo '==> Restart the service to use the new binaries: sudo systemctl restart "pyroshine@$USER"'
-  if [ "$(vercmp "$2" 0.18.0-0)" -lt 0 ]; then
+  if [ "$(vercmp "$2" 0.18.0prerelease-0)" -lt 0 ]; then
     echo "==> Management moved to the browser: run 'pyroshine web setup' once, then open"
     echo "    Pyroshine from the application menu. The server now shows the tray itself."
   fi

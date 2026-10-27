@@ -1,0 +1,44 @@
+# Maintainer: karsyboy
+#
+# pyroshine-prerelease-bin is pyroshine-bin on the prerelease channel: it
+# repackages the Arch package of Pyroshine's newest release including
+# prereleases (tags vX.Y.Z-prerelease[.N]), so it also moves on to the stable
+# release that follows. Keep it in step with ../pyroshine-bin/PKGBUILD.
+# scripts/sync.sh sets _tag, pkgver and checksums for new releases; pkgver is
+# the release version without its '-' (0.18.0prerelease.1 for
+# v0.18.0-prerelease.1), which pacman orders before 0.18.0.
+#
+# Prepared for the first 0.18 prerelease, the first release with the bundled
+# tray; scripts/sync.sh builds it once that release exists.
+
+pkgname=pyroshine-prerelease-bin
+_tag=v0.18.0-prerelease
+pkgver=0.18.0prerelease
+pkgrel=1
+pkgdesc='Pyroshine game-streaming host for Moonlight clients, with native PyroWave support, web management and desktop tray (prerelease builds)'
+arch=('x86_64')
+url='https://github.com/karsyboy/pyroshine'
+license=('BSD-2-Clause')
+# Release binaries are already stripped; the bundled PyroWave library is pinned.
+options=('!strip' '!debug')
+depends=('glibc>=2.39' 'libgcc' 'libstdc++' 'hicolor-icon-theme' 'libdrm' 'libevdev' 'libffi'
+         'libxkbcommon' 'mesa' 'opus' 'vulkan-icd-loader' 'wayland' 'xorg-xwayland')
+optdepends=('vulkan-driver: hardware Vulkan for PyroWave encoding'
+            'xdg-desktop-portal: open the web interface from the tray with focus'
+            'xdg-utils: open the web interface without a desktop portal')
+provides=("pyroshine=${pkgver}" "pyroshine-ui=${pkgver}")
+# No replaces: switching to prerelease builds is always a choice.
+conflicts=('pyroshine' 'pyroshine-bin' 'pyroshine-ui' 'pyroshine-ui-bin')
+install=pyroshine-prerelease-bin.install
+_release="${url}/releases/download/${_tag}"
+# Renamed so the downloaded nfpm package is not mistaken for makepkg output.
+source=("pyroshine-${pkgver}-nfpm.tar.zst::${_release}/pyroshine-${pkgver}-1-x86_64.pkg.tar.zst")
+noextract=("pyroshine-${pkgver}-nfpm.tar.zst")
+sha256sums=('SKIP')
+
+package() {
+  # nfpm's .PKGINFO/.MTREE/.INSTALL are replaced by this PKGBUILD's metadata.
+  bsdtar -xf "$srcdir/pyroshine-${pkgver}-nfpm.tar.zst" -C "$pkgdir" --exclude '.PKGINFO' \
+    --exclude '.MTREE' --exclude '.INSTALL' --exclude '.BUILDINFO'
+  mv "$pkgdir/usr/share/licenses/pyroshine" "$pkgdir/usr/share/licenses/$pkgname"
+}

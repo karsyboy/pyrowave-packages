@@ -1,8 +1,10 @@
 ---
 name: Publish
 
-# Packages new stable Pyroshine and Pyrolight releases and publishes them to the
-# [pyrowave] repository (the x86_64 release of this repo). Each project's
+# Packages new Pyroshine and Pyrolight releases and publishes them to the
+# [pyrowave] repository (the x86_64 release of this repo): stable releases as
+# the -bin packages, stable releases and prereleases as the -prerelease-bin
+# packages. Each project's
 # release workflow starts it with workflow_dispatch once its release is
 # published; a push that changes a package also runs it.
 on:

@@ -7,10 +7,15 @@ Arch-based x86_64 systems. It provides:
 | --- | --- |
 | `pyroshine-bin` | [Pyroshine](https://github.com/karsyboy/pyroshine) streaming host: server, systemd service, udev rules, PyroWave library, web management interface and desktop tray (from 0.18 it replaces `pyroshine-ui-bin`) |
 | `pyrolight-bin` | [Pyrolight](https://github.com/karsyboy/pyrolight) streaming client with PyroWave support |
+| `pyroshine-prerelease-bin` | `pyroshine-bin` on the prerelease channel |
+| `pyrolight-prerelease-bin` | `pyrolight-bin` on the prerelease channel |
 
 Each package repackages the Arch package attached to the project's GitHub
-release. Each new stable release is published here as soon as the project's
-release workflow finishes.
+release. The `-bin` packages follow stable releases; the `-prerelease-bin`
+packages follow the newest release including prereleases (tags
+`vX.Y.Z-prerelease` or `vX.Y.Z-prerelease.N`), so they move on to the stable
+release that follows. Each new release is published here as soon as the
+project's release workflow finishes.
 
 ## Setup
 
@@ -36,6 +41,22 @@ sudo systemctl enable --now "pyroshine@$USER"
 sudo pacman -Syu pyrolight-bin
 ```
 
+### Prerelease builds
+
+To test prereleases, install the `-prerelease-bin` package instead; pacman
+offers to remove the stable package it replaces:
+
+```sh
+sudo pacman -Syu pyroshine-prerelease-bin
+sudo pacman -Syu pyrolight-prerelease-bin
+```
+
+Prerelease versions drop the `-` from the tag (`0.18.0prerelease.1` for
+`v0.18.0-prerelease.1`), so pacman orders them before the release (`0.18.0`).
+To go back to stable releases, install `pyroshine-bin` or `pyrolight-bin`
+again; while the prerelease is newer than the newest stable release, that
+installs an older version.
+
 `sudo pacman -Syu` upgrades them with the rest of the system. After a Pyroshine
 upgrade, restart the service: `sudo systemctl restart "pyroshine@$USER"`.
 
@@ -53,9 +74,13 @@ Pyrolight's release workflow starts it after publishing a stable release, when
 started by hand, and on pushes that change a package. It runs
 [scripts/sync.sh](scripts/sync.sh) in an Arch container, which:
 
-1. Finds each project's newest stable release (tags `vX.Y.Z`; prereleases are
-   skipped) and updates `pkgver`, checksums and `.SRCINFO` with
-   [scripts/update-pkgbuild.sh](scripts/update-pkgbuild.sh).
+1. Finds each package's newest release: stable releases (tags `vX.Y.Z`) for
+   the `-bin` packages, stable releases and prereleases (tags
+   `vX.Y.Z-prerelease[.N]`) for the `-prerelease-bin` packages. It updates
+   `pkgver` (and `_tag` for prerelease packages), checksums and `.SRCINFO` with
+   [scripts/update-pkgbuild.sh](scripts/update-pkgbuild.sh). A PKGBUILD prepared
+   for a release that is not out yet (its `pkgver` is newer, checksums `SKIP`)
+   waits for it.
 2. Builds and signs every package file the database does not list yet.
 3. Adds them to the signed `pyrowave` database and uploads packages, then the
    database, to the `x86_64` release of this repository.
@@ -69,8 +94,8 @@ never replaced, because pacman caches packages by file name.
 | Task | How |
 | --- | --- |
 | Publish by hand | Run the **Publish** workflow from the Actions tab |
-| Fix a PKGBUILD | Edit it, bump `pkgrel`, run `makepkg --printsrcinfo > .SRCINFO` and push |
-| Change dependencies | Keep `depends` in sync with the `archlinux` overrides in Pyroshine's `nfpm.yaml`/`nfpm-ui.yaml` and Pyrolight's `app/deploy/linux/nfpm.yaml` |
+| Fix a PKGBUILD | Edit it, bump `pkgrel`, run `makepkg --printsrcinfo > .SRCINFO` and push; make the same fix in the project's other channel |
+| Change dependencies | Keep `depends` of both channels in sync with the `archlinux` overrides in Pyroshine's `nfpm.yaml` and Pyrolight's `app/deploy/linux/nfpm.yaml` |
 | Test locally | `GPGKEY=<fingerprint> STORE=/tmp/pyrowave-repo scripts/sync.sh` publishes to a directory instead of GitHub |
 
 Secrets:

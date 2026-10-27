@@ -1,0 +1,42 @@
+# Maintainer: karsyboy
+#
+# pyrolight-prerelease-bin is pyrolight-bin on the prerelease channel: it
+# repackages the Arch package of Pyrolight's newest release including
+# prereleases (tags vX.Y.Z-prerelease[.N]), so it also moves on to the stable
+# release that follows. Keep it in step with ../pyrolight-bin/PKGBUILD.
+# scripts/sync.sh sets _tag, pkgver and checksums for new releases; pkgver is
+# the release version without its '-' (6.2.8prerelease for v6.2.8-prerelease),
+# which pacman orders before 6.2.8.
+
+pkgname=pyrolight-prerelease-bin
+_tag=v6.2.7
+pkgver=6.2.7
+pkgrel=1
+pkgdesc='Moonlight game-streaming client fork with PyroWave support, for Pyroshine and other compatible hosts (prerelease builds)'
+arch=('x86_64')
+url='https://github.com/karsyboy/pyrolight'
+license=('GPL-3.0-or-later')
+depends=('glibc>=2.35' 'libgcc' 'libstdc++' 'libglvnd' 'libdrm' 'libx11' 'libxcb' 'libxext'
+         'libxfixes' 'libxi' 'libxcursor' 'libxrandr' 'libxss' 'libxtst' 'libice'
+         'libsm' 'fontconfig' 'freetype2' 'harfbuzz' 'zlib' 'e2fsprogs'
+         'libgpg-error' 'wayland' 'systemd-libs' 'alsa-lib' 'libva' 'bash'
+         'hicolor-icon-theme')
+optdepends=('vulkan-driver: PyroWave decoding and Vulkan rendering'
+            'libpulse: PulseAudio/PipeWire audio output'
+            'libdecor: window decorations on Wayland compositors without server-side decorations')
+provides=("pyrolight=${pkgver}")
+# Pyrolight keeps Moonlight's desktop ID, AppStream ID and settings location.
+conflicts=('pyrolight' 'pyrolight-bin' 'moonlight-qt')
+# The payload is the release AppImage's own pinned, stripped Qt/SDL/FFmpeg bundle.
+options=('!strip' '!debug')
+# Renamed so the downloaded nfpm package is not mistaken for makepkg output.
+source=("pyrolight-${pkgver}-nfpm.tar.zst::${url}/releases/download/${_tag}/pyrolight-${pkgver}-1-x86_64.pkg.tar.zst")
+noextract=("pyrolight-${pkgver}-nfpm.tar.zst")
+sha256sums=('35b06a7f8a0f391b5d1c3ac4a3ac7d220a1e35486fbd9974452bdabbf84196c0')
+
+package() {
+  # nfpm's .PKGINFO/.MTREE are replaced by this PKGBUILD's metadata.
+  bsdtar -xf "$srcdir/pyrolight-${pkgver}-nfpm.tar.zst" -C "$pkgdir" \
+    --exclude '.PKGINFO' --exclude '.MTREE' --exclude '.INSTALL' --exclude '.BUILDINFO'
+  mv "$pkgdir/usr/share/licenses/pyrolight" "$pkgdir/usr/share/licenses/$pkgname"
+}

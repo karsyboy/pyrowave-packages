@@ -1,8 +1,13 @@
 #!/bin/bash
 # Bring the pacman repository up to date: move every package directory to its
-# project's newest stable GitHub release, build and sign the packages that are
-# not published yet, add them to the signed database, publish, and remove
-# package files the database no longer lists.
+# project's newest GitHub release on the package's channel, build and sign the
+# packages that are not published yet, add them to the signed database,
+# publish, and remove package files the database no longer lists.
+#
+# Channels: <name>-prerelease-bin directories follow the newest release
+# including prereleases (tags vX.Y.Z-prerelease[.N]), so they also move on to
+# the stable release that follows; every other directory follows stable
+# releases (tags vX.Y.Z...) only.
 #
 # Already-published package files are never rebuilt or replaced: pacman caches
 # packages by file name, so a changed file under the same name would fail its
@@ -65,15 +70,34 @@ else
   store_delete() { rm -f "$STORE/$1"; }
 fi
 
-# Newest stable (vX.Y.Z...) release of a GitHub project. Prerelease tags are
-# skipped even when the release is not marked as a prerelease.
-latest_stable()
+# The pacman version of a release version: 0.18.0-prerelease.1 is
+# 0.18.0prerelease.1, which vercmp orders after 0.17.x and before 0.18.0.
+pkgver_of() { printf '%s\n' "${1/-/}"; }
+
+# Newest release version of a GitHub project on a channel, without the 'v'.
+# stable: vX.Y.Z... tags of releases not marked as prereleases; prerelease tags
+# are skipped even when the release is not marked as a prerelease.
+# prerelease: those and vX.Y.Z...-prerelease[.N] tags, marked or not.
+latest_release()
 {
-  local auth=()
+  local auth=() filter pattern tags version best=
   [ -z "${GH_TOKEN:-}" ] || auth=(-H "Authorization: Bearer $GH_TOKEN")
-  curl -fsSL "${auth[@]}" "https://api.github.com/repos/$1/releases?per_page=50" |
-    jq -r '.[] | select((.draft or .prerelease) | not) | .tag_name' |
-    { grep -E '^v[0-9]+(\.[0-9]+)+$' || true; } | sed 's/^v//' | sort -V | tail -n 1
+  if [ "$2" = prerelease ]; then
+    filter='.[] | select(.draft | not) | .tag_name'
+    pattern='^v[0-9]+(\.[0-9]+)+(-prerelease(\.[0-9]+)?)?$'
+  else
+    filter='.[] | select((.draft or .prerelease) | not) | .tag_name'
+    pattern='^v[0-9]+(\.[0-9]+)+$'
+  fi
+  tags=$(curl -fsSL "${auth[@]}" "https://api.github.com/repos/$1/releases?per_page=50" |
+    jq -r "$filter" | { grep -E "$pattern" || true; } | sed 's/^v//') || return
+  while read -r version; do
+    [ -n "$version" ] || continue
+    if [ -z "$best" ] || [ "$(vercmp "$(pkgver_of "$version")" "$(pkgver_of "$best")")" -gt 0 ]; then
+      best=$version
+    fi
+  done <<<"$tags"
+  printf '%s\n' "$best"
 }
 
 # --- Update PKGBUILDs and build what is not published -----------------------
@@ -100,10 +124,19 @@ for pkgbuild in "$ROOT"/*/PKGBUILD; do
   name=$(basename "$dir")
   project=$(sed -n 's|^\turl = https://github.com/||p' "$dir/.SRCINFO" | head -n 1)
   current=$(sed -n 's/^pkgver=//p' "$pkgbuild")
-  latest=$(latest_stable "$project")
-  [ -n "$latest" ] || { echo "$name: no stable release of $project" >&2; status=1; continue; }
+  channel=stable
+  case $name in *-prerelease-bin) channel=prerelease ;; esac
+  latest=$(latest_release "$project" "$channel")
+  [ -n "$latest" ] || { echo "$name: no release of $project on the $channel channel" >&2; status=1; continue; }
 
-  if [ "$(vercmp "$latest" "$current")" -gt 0 ]; then
+  order=$(vercmp "$(pkgver_of "$latest")" "$current")
+  # A PKGBUILD can be prepared for a release that is not out yet.
+  if [ "$order" -lt 0 ]; then
+    echo "==> $name: waiting for $current (newest on the $channel channel: $latest)"
+    continue
+  fi
+  # A prepared PKGBUILD has no checksums until its release exists.
+  if [ "$order" -gt 0 ] || grep -qxF "sha256sums=('SKIP')" "$pkgbuild"; then
     echo "==> $name: $current -> $latest"
     cp "$pkgbuild" "$WORK/PKGBUILD.$name"
     cp "$dir/.SRCINFO" "$WORK/SRCINFO.$name"
@@ -125,7 +158,12 @@ for pkgbuild in "$ROOT"/*/PKGBUILD; do
   [ ${#missing[@]} -gt 0 ] || { echo "==> $name: published"; continue; }
 
   echo "==> $name: building ${missing[*]##*/}"
-  (cd "$dir" && makepkg --force --nodeps --noconfirm --sign --key "$GPGKEY")
+  # One failed package must not hold back the others.
+  if ! (cd "$dir" && makepkg --force --nodeps --noconfirm --sign --key "$GPGKEY"); then
+    echo "$name: build failed" >&2
+    status=1
+    continue
+  fi
   for file in "${missing[@]}"; do
     [ -f "$file" ] && [ -f "$file.sig" ] || fail "makepkg did not produce $file and its signature"
     new+=("$file")
