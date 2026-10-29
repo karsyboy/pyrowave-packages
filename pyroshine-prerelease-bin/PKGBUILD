@@ -12,8 +12,8 @@
 # tray; scripts/sync.sh builds it once that release exists.
 
 pkgname=pyroshine-prerelease-bin
-_tag=v0.18.0-prerelease.1
-pkgver=0.18.0prerelease.1
+_tag=v0.18.0-prerelease.2
+pkgver=0.18.0prerelease.2
 pkgrel=1
 pkgdesc='Pyroshine game-streaming host for Moonlight clients, with native PyroWave support, web management and desktop tray (prerelease builds)'
 arch=('x86_64')
@@ -34,7 +34,7 @@ _release="${url}/releases/download/${_tag}"
 # Renamed so the downloaded nfpm package is not mistaken for makepkg output.
 source=("pyroshine-${pkgver}-nfpm.tar.zst::${_release}/pyroshine-${pkgver}-1-x86_64.pkg.tar.zst")
 noextract=("pyroshine-${pkgver}-nfpm.tar.zst")
-sha256sums=('b58a8086d607d20ca966fc2a45e010a7d4938c64dcc1851d5b014358ea8e2f65')
+sha256sums=('16b1238fc0be888f74f4a5d0c4b9d53a5cf0860bf1d1019276d91ceee8df6ad2')
 
 package() {
   # nfpm's .PKGINFO/.MTREE/.INSTALL are replaced by this PKGBUILD's metadata.
