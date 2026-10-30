@@ -1,6 +1,6 @@
 pkgbase = pyroshine-prerelease-bin
 	pkgdesc = Pyroshine game-streaming host for Moonlight clients, with native PyroWave support, web management and desktop tray (prerelease builds)
-	pkgver = 0.18.0prerelease.2
+	pkgver = 0.18.0prerelease.3
 	pkgrel = 1
 	url = https://github.com/karsyboy/pyroshine
 	install = pyroshine-prerelease-bin.install
@@ -22,16 +22,16 @@ pkgbase = pyroshine-prerelease-bin
 	optdepends = vulkan-driver: hardware Vulkan for PyroWave encoding
 	optdepends = xdg-desktop-portal: open the web interface from the tray with focus
 	optdepends = xdg-utils: open the web interface without a desktop portal
-	provides = pyroshine=0.18.0prerelease.2
-	provides = pyroshine-ui=0.18.0prerelease.2
+	provides = pyroshine=0.18.0prerelease.3
+	provides = pyroshine-ui=0.18.0prerelease.3
 	conflicts = pyroshine
 	conflicts = pyroshine-bin
 	conflicts = pyroshine-ui
 	conflicts = pyroshine-ui-bin
-	noextract = pyroshine-0.18.0prerelease.2-nfpm.tar.zst
+	noextract = pyroshine-0.18.0prerelease.3-nfpm.tar.zst
 	options = !strip
 	options = !debug
-	source = pyroshine-0.18.0prerelease.2-nfpm.tar.zst::https://github.com/karsyboy/pyroshine/releases/download/v0.18.0-prerelease.2/pyroshine-0.18.0prerelease.2-1-x86_64.pkg.tar.zst
-	sha256sums = 16b1238fc0be888f74f4a5d0c4b9d53a5cf0860bf1d1019276d91ceee8df6ad2
+	source = pyroshine-0.18.0prerelease.3-nfpm.tar.zst::https://github.com/karsyboy/pyroshine/releases/download/v0.18.0-prerelease.3/pyroshine-0.18.0prerelease.3-1-x86_64.pkg.tar.zst
+	sha256sums = aa94d503a984d74c4e79487c3c7d3749b2e902b21cdf9f937e267fb41785db9f
 
 pkgname = pyroshine-prerelease-bin
