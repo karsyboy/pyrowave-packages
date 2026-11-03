@@ -6,7 +6,7 @@
 # new releases.
 
 pkgname=pyroshine-bin
-pkgver=0.17.6
+pkgver=0.18.1
 pkgrel=1
 pkgdesc='Pyroshine game-streaming host for Moonlight clients, with native PyroWave support, web management and desktop tray'
 arch=('x86_64')
@@ -29,7 +29,7 @@ _release="${url}/releases/download/v${pkgver}"
 # Renamed so the downloaded nfpm package is not mistaken for makepkg output.
 source=("pyroshine-${pkgver}-nfpm.tar.zst::${_release}/pyroshine-${pkgver}-1-x86_64.pkg.tar.zst")
 noextract=("pyroshine-${pkgver}-nfpm.tar.zst")
-sha256sums=('51cd35f12dab35dfadb78da0a85116c97bf36b416698429973c2f56fb849ae7e')
+sha256sums=('60e86a2de7ca38e44d476c2564ce79d1bc503d335849a62fa8f62f5e047e51fe')
 
 package() {
   # nfpm's .PKGINFO/.MTREE/.INSTALL are replaced by this PKGBUILD's metadata.

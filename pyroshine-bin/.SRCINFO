@@ -1,24 +1,15 @@
 pkgbase = pyroshine-bin
-	pkgdesc = Pyroshine game-streaming host for Moonlight clients, with native PyroWave support
-	pkgver = 0.17.6
+	pkgdesc = Pyroshine game-streaming host for Moonlight clients, with native PyroWave support, web management and desktop tray
+	pkgver = 0.18.1
 	pkgrel = 1
 	url = https://github.com/karsyboy/pyroshine
+	install = pyroshine-bin.install
 	arch = x86_64
 	license = BSD-2-Clause
-	noextract = pyroshine-0.17.6-nfpm.tar.zst
-	noextract = pyroshine-ui-0.17.6-nfpm.tar.zst
-	options = !strip
-	options = !debug
-	source = pyroshine-0.17.6-nfpm.tar.zst::https://github.com/karsyboy/pyroshine/releases/download/v0.17.6/pyroshine-0.17.6-1-x86_64.pkg.tar.zst
-	source = pyroshine-ui-0.17.6-nfpm.tar.zst::https://github.com/karsyboy/pyroshine/releases/download/v0.17.6/pyroshine-ui-0.17.6-1-x86_64.pkg.tar.zst
-	sha256sums = 51cd35f12dab35dfadb78da0a85116c97bf36b416698429973c2f56fb849ae7e
-	sha256sums = 0d6c066f7a51cabaeae909fafbdd0853effdac99e62f5146c77f2c0c358805e2
-
-pkgname = pyroshine-bin
-	install = pyroshine-bin.install
 	depends = glibc>=2.39
 	depends = libgcc
 	depends = libstdc++
+	depends = hicolor-icon-theme
 	depends = libdrm
 	depends = libevdev
 	depends = libffi
@@ -29,24 +20,18 @@ pkgname = pyroshine-bin
 	depends = wayland
 	depends = xorg-xwayland
 	optdepends = vulkan-driver: hardware Vulkan for PyroWave encoding
-	optdepends = pyroshine-ui-bin: system tray, pairing and settings app
-	provides = pyroshine=0.17.6
+	optdepends = xdg-desktop-portal: open the web interface from the tray with focus
+	optdepends = xdg-utils: open the web interface without a desktop portal
+	provides = pyroshine=0.18.1
+	provides = pyroshine-ui=0.18.1
 	conflicts = pyroshine
-
-pkgname = pyroshine-ui-bin
-	pkgdesc = Desktop app for the Pyroshine streaming server: tray, pairing, clients, settings and stream dashboard
-	install = pyroshine-ui-bin.install
-	depends = pyroshine=0.17.6
-	depends = cairo
-	depends = dbus
-	depends = gdk-pixbuf2
-	depends = glib2
-	depends = glibc>=2.39
-	depends = gtk3
-	depends = hicolor-icon-theme
-	depends = libgcc
-	depends = libsoup3
-	depends = webkit2gtk-4.1
-	provides = pyroshine-ui=0.17.6
 	conflicts = pyroshine-ui
-	backup = etc/xdg/autostart/pyroshine-ui.desktop
+	conflicts = pyroshine-ui-bin
+	replaces = pyroshine-ui-bin
+	noextract = pyroshine-0.18.1-nfpm.tar.zst
+	options = !strip
+	options = !debug
+	source = pyroshine-0.18.1-nfpm.tar.zst::https://github.com/karsyboy/pyroshine/releases/download/v0.18.1/pyroshine-0.18.1-1-x86_64.pkg.tar.zst
+	sha256sums = 60e86a2de7ca38e44d476c2564ce79d1bc503d335849a62fa8f62f5e047e51fe
+
+pkgname = pyroshine-bin
