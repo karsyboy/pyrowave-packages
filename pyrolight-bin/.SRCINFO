@@ -1,6 +1,6 @@
 pkgbase = pyrolight-bin
 	pkgdesc = Moonlight game-streaming client fork with PyroWave support, for Pyroshine and other compatible hosts
-	pkgver = 6.2.7
+	pkgver = 6.2.8
 	pkgrel = 1
 	url = https://github.com/karsyboy/pyrolight
 	arch = x86_64
@@ -36,13 +36,13 @@ pkgbase = pyrolight-bin
 	optdepends = vulkan-driver: PyroWave decoding and Vulkan rendering
 	optdepends = libpulse: PulseAudio/PipeWire audio output
 	optdepends = libdecor: window decorations on Wayland compositors without server-side decorations
-	provides = pyrolight=6.2.7
+	provides = pyrolight=6.2.8
 	conflicts = pyrolight
 	conflicts = moonlight-qt
-	noextract = pyrolight-6.2.7-nfpm.tar.zst
+	noextract = pyrolight-6.2.8-nfpm.tar.zst
 	options = !strip
 	options = !debug
-	source = pyrolight-6.2.7-nfpm.tar.zst::https://github.com/karsyboy/pyrolight/releases/download/v6.2.7/pyrolight-6.2.7-1-x86_64.pkg.tar.zst
-	sha256sums = 35b06a7f8a0f391b5d1c3ac4a3ac7d220a1e35486fbd9974452bdabbf84196c0
+	source = pyrolight-6.2.8-nfpm.tar.zst::https://github.com/karsyboy/pyrolight/releases/download/v6.2.8/pyrolight-6.2.8-1-x86_64.pkg.tar.zst
+	sha256sums = 34620bb3240aefe93bbe30f674a00d5e8949b32068a6d65532d4043ff03b2bae
 
 pkgname = pyrolight-bin

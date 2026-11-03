@@ -9,8 +9,8 @@
 # which pacman orders before 6.2.8.
 
 pkgname=pyrolight-prerelease-bin
-_tag=v6.2.8-prerelease.4
-pkgver=6.2.8prerelease.4
+_tag=v6.2.8
+pkgver=6.2.8
 pkgrel=1
 pkgdesc='Moonlight game-streaming client fork with PyroWave support, for Pyroshine and other compatible hosts (prerelease builds)'
 arch=('x86_64')
@@ -32,7 +32,7 @@ options=('!strip' '!debug')
 # Renamed so the downloaded nfpm package is not mistaken for makepkg output.
 source=("pyrolight-${pkgver}-nfpm.tar.zst::${url}/releases/download/${_tag}/pyrolight-${pkgver}-1-x86_64.pkg.tar.zst")
 noextract=("pyrolight-${pkgver}-nfpm.tar.zst")
-sha256sums=('0993b3c994746448f9c2dd0d7f864572161ad4ebbf503711ea03b7ba7cba1237')
+sha256sums=('34620bb3240aefe93bbe30f674a00d5e8949b32068a6d65532d4043ff03b2bae')
 
 package() {
   # nfpm's .PKGINFO/.MTREE are replaced by this PKGBUILD's metadata.
