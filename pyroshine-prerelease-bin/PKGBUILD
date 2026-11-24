@@ -14,7 +14,7 @@
 pkgname=pyroshine-prerelease-bin
 _tag=v0.18.9
 pkgver=0.18.9
-pkgrel=1
+pkgrel=2
 pkgdesc='Pyroshine game-streaming host for Moonlight clients, with native PyroWave support, web management and desktop tray (prerelease builds)'
 arch=('x86_64')
 url='https://github.com/karsyboy/pyroshine'
@@ -34,7 +34,7 @@ _release="${url}/releases/download/${_tag}"
 # Renamed so the downloaded nfpm package is not mistaken for makepkg output.
 source=("pyroshine-${pkgver}-nfpm.tar.zst::${_release}/pyroshine-${pkgver}-1-x86_64.pkg.tar.zst")
 noextract=("pyroshine-${pkgver}-nfpm.tar.zst")
-sha256sums=('460e9339c4fb43fd34c12f2bb3577b1491d3a7ffaf44d6bdde829190f8110b11')
+sha256sums=('0d50e46e83713d7304486edfa21c84cb68b96373eb052c3e5f8caa4ccc363404')
 
 package() {
   # nfpm's .PKGINFO/.MTREE/.INSTALL are replaced by this PKGBUILD's metadata.
